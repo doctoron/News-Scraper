@@ -1,0 +1,80 @@
+body {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background-color: #F2F6D0;
+  font-weight: bolder
+}
+
+#banner {
+  color: #daa520;
+  text-shadow: 2px 2px #ffffff;
+}
+
+#subhead { 
+  color: #F2F6D0;
+  text-shadow: 1px 1px #556b2f;
+}
+
+#wrapper {
+  width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 5%;
+}
+
+#articles {
+  display: inline-block;
+  overflow: auto;
+  width: 60%;
+  height: 700px;
+  color: #006400;
+}
+
+#notes {
+  background-color: #ffff00;
+  color: #006400;
+  float: right;
+  width: 30%;
+}
+
+textarea, input {
+  display: block;
+  width: 100%;
+  background-color: #FCF5C7;
+}
+
+input {
+  height: 36px;
+  font-size: 24px;
+}
+
+textarea {
+  height: 200px;
+  font-size: 18px;
+}
+
+.background-image{
+  background-color: red;
+  background-image: url("../img/hackernews.jpg");  
+}
+
+@media (min-width: 1px) {
+  .display-1 {
+      font-size: 4rem;
+  }
+}
+
+@media (min-width: 576px) {
+  .display-1{
+      font-size: 5rem;
+  }
+}
+
+/*Medium devices (tablets, 768px and up)*/
+@media (min-width: 768px) {
+  .display-1 {
+      font-size: 6rem;
+  }
+}

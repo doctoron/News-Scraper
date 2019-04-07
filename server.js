@@ -1,104 +1,83 @@
-const express = require("express");
-const logger = require("morgan");
-const mongoose = require("mongoose");
+const express = require('express');
+const exphbs = require('express-handlebars');
+const logger = require('morgan');
+const mongoose = require('mongoose');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
+// Require all models setting the root at ./models
+const db = require('./models');
 
-// Our scraping tools
-// Axios is a promised-based http library, similar to jQuery's Ajax method
-// It works on the client and on the server
-const axios = require("axios");
-const cheerio = require("cheerio");
-
-// Require all models
-const db = require("./models");
-
-const PORT = 6020;
+// Port configuration for local || Heroku
+const PORT = process.env.PORT || process.argv[2] || 6020;
 
 // Initialize Express
 const app = express();
 
-// Configure middleware
+// Configure middleware and display home page
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
+app.get('/', (req, res) => {
+res.render('index');
+});
+
 // Use morgan logger for logging requests
-app.use(logger("dev"));
+app.use(logger('dev'));
 
 // Parse request body as JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Make public a static folder
-app.use(express.static("public"));
+// Make /public a static folder
+app.use(express.static(__dirname + '/public'));
+// app.use(express.static('/public'));
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/webscraper", { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost/webscraper', { useNewUrlParser: true });
 
 // Routes
-const url = "https://news.ycombinator.com/";
+// Import routes and give the server access to them.
+// const routes = require("./controllers/article_controller");
 
-// A GET route for scraping the url
-app.get("/scrape", (req, res) => {
+// app.use(routes);
+const url1 ='http://www.echojs.com/'
+const url2 = 'https://news.ycombinator.com/';
+
+// A get route for scraping the url
+app.get('/scrape', (req, res) => {
   // First, we grab the body of the html with axios
-  axios.get(url).then(response => {
+  axios.get(url1).then(response => {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
-    let $ = cheerio.load(response.data);
-    //console.log(`This is what we found: ${response.data}`);
+    const $ = cheerio.load(response.data);
+    // console.log(`This is what we found: ${response.data}`);
 
-    // Now with cheerio grab every p tag with title class, and do the following:
-    $("td.title").each((i, element) => {
-      console.log(element);
-      // $("table.itemlist tr").each(i, element)=> {
-      // $("table.itemlist tr td:nth-child(3) table.itemlist tr td:nth-child(3)").each(function (i, element) {
+    // Now with cheerio grab every td tag with title class, and do the following:
+    // $('td.title').each((i, element) => {
+      $("article h2").each(function(i, element) {
+        // console.log(`This is our result: ${element}`);
+      const result = {};
 
-      const article = {
-        title: $(element).text(),
-        link: $(element).children().attr("href")
-      }
+      result.title = $(this)
+        .children('a')
+        .text();
+      result.link = $(this)
+        .children('a')
+        .attr('href');
 
-      db.Article.create(article)
-        .then(function (dbArticle) {
-          console.log('Made it here');
-          // View the added result in the console
+      db.Article.create(result)
+        .then( (dbArticle) => {
           console.log(dbArticle);
         })
-        .catch(function (err) {
-          // If an error occurred, log it
+        .catch( (err) => {
           console.log(err);
         });
-
-        res.redirect('/');
     });
-
-    res.send("Scrape Complete");
-
-
-    // Add the text and href of every link, and save them as properties of the result object
-    //   result.title = $(this)
-    //     .children("a")
-    //     .text();
-    // result.link = $(this)
-    //   .children("a")
-    //   .attr("href");
-
-    // Create a new Article using the `result` object built from scraping
-
-
-    // console.log(response.data);
-    // let getData = html => {
-    //   data = [];
-    //   let $ = cheerio.load(html);
-    //   $('table.itemlist tr td:nth-child(3)').each((i, elem) => {
-    //     data.push({
-    //       title: $(elem).text(),
-    //       link: $(elem).find('a.storylink').attr('href')
-    //     });
-    //   });
-    //   console.log(data);
-    // }
-    //   getData(response.data);
-
-    // Send a message to the client;
-  }).catch(err => res.send(err))
-
+    // res.send('Scrape Complete');
+    res.render('index');
+  });
 });
+
+
 // Route for getting all Articles from the db
 app.get("/articles", (req, res) => {
   // Grab every document in the Articles collection
@@ -107,7 +86,7 @@ app.get("/articles", (req, res) => {
       // If we were able to successfully find Articles, send them back to the client
       res.json(dbArticle);
     })
-    .catch( (err) => {
+    .catch((err) => {
       // If an error occurred, send it to the client
       res.json(err);
     });
@@ -123,7 +102,7 @@ app.get("/articles/:id", (req, res) => {
       // If we were able to successfully find an Article with the given id, send it back to the client
       res.json(dbArticle);
     })
-    .catch( (err) => {
+    .catch((err) => {
       // If an error occurred, send it to the client
       res.json(err);
     });
@@ -139,7 +118,7 @@ app.post("/articles/:id", function (req, res) {
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
       return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
     })
-    .then( (dbArticle) => {
+    .then((dbArticle) => {
       // If we were able to successfully update an Article, send it back to the client
       res.json(dbArticle);
     })
@@ -148,6 +127,7 @@ app.post("/articles/:id", function (req, res) {
       res.json(err);
     });
 });
+
 // Start the server
 app.listen(PORT, () => {
   console.log("App running on port " + PORT + "!");

@@ -1,20 +1,30 @@
 {
-  "name": "mongoose_skeleton",
+  "name": "News-Scraper",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "watch": "nodemon server.js"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
-    "mongoose": "^5.4.20",
+    "express-handlebars": "^3.0.2",
+    "mongoose": "^5.4.22",
     "morgan": "^1.9.1"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doctoron/News-Scraper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doctoron/News-Scraper/issues"
+  },
+  "homepage": "https://github.com/doctoron/News-Scraper#readme"
 }
