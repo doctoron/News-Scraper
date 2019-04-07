@@ -1,0 +1,6 @@
+Scraped Articles:
+{{#if articles}}
+{{#each articles}}
+        <p>article</p>
+{{/each}}
+{{/if}}

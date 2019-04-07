@@ -28,8 +28,6 @@ app.engine('handlebars', exphbs({
   }
 }));
 
-
-
 // Use morgan logger for logging requests
 app.use(logger('dev'));
 
@@ -52,21 +50,25 @@ const url1 = 'http://www.echojs.com/'
 const url2 = 'https://news.ycombinator.com/';
 
 app.get('/', (req, res) => {
-  res.render('index');
+  db.Article.find({})
+    .then(articles => {
+      res.render("index", { 
+        articles 
+      });
+    })
+    .catch(err => {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
 });
 
 // A get route for scraping the url
 app.get('/scrape', (req, res) => {
-  // First, we grab the body of the html with axios
   axios.get(url1).then(response => {
-    // Then, we load that into cheerio and save it to $ for a shorthand selector
     const $ = cheerio.load(response.data);
-    // console.log(`This is what we found: ${response.data}`);
 
     // Now with cheerio grab every td tag with title class, and do the following:
-    // $('td.title').each((i, element) => {
-    $("article h2").each(function (i, element) {
-      // console.log(`This is our result: ${element}`);
+    $("article h2").each((i, element) => {
       let result = {};
 
       result.title = $(this)
@@ -81,42 +83,22 @@ app.get('/scrape', (req, res) => {
         .then((dbArticle) => {
           console.log(result);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     });
-    // res.render "index", retrievedArticles
     res.send('Scrape Complete');
-    // res.redirect('/');
   });
-});
-
-
-app.get("/", (req, res) => {
-  db.Article.find({})
-    .then( (dbArticle) => {
-      // If we were able to successfully find Articles, send them back to the client
-      // const retrievedArticles = dbArticle;
-      // let hbsObject;
-      // hbsObject = {
-      //   articles: dbArticle
-      // };
-      res.render("index", {articles});
-    })
-    .catch(function (err) {
-      // If an error occurred, send it to the client
-      res.json(err);
-    });
 });
 
 app.get("/saved", (req, res) => {
   db.Article.find({ isSaved: true })
     .then(function (retrievedArticles) {
       // If we were able to successfully find Articles, send them back to the client
-      let hbsObject;
-      hbsObject = {
-        articles: retrievedArticles
-      };
+      // let hbsObject;
+      // hbsObject = {
+      //   articles: retrievedArticles
+      // };
       res.render("saved", hbsObject);
     })
     .catch(function (err) {
@@ -124,8 +106,6 @@ app.get("/saved", (req, res) => {
       res.json(err);
     });
 });
-
-
 
 // Route for getting all Articles from the db
 app.get("/articles", (req, res) => {
