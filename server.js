@@ -67,7 +67,7 @@ app.get('/scrape', (req, res) => {
     // $('td.title').each((i, element) => {
     $("article h2").each(function (i, element) {
       // console.log(`This is our result: ${element}`);
-      const result = {};
+      let result = {};
 
       result.title = $(this)
         .children('a')
@@ -91,16 +91,17 @@ app.get('/scrape', (req, res) => {
   });
 });
 
+
 app.get("/", (req, res) => {
   db.Article.find({})
-    .then(function (dbArticle) {
+    .then( (dbArticle) => {
       // If we were able to successfully find Articles, send them back to the client
-      const retrievedArticles = dbArticle;
-      let hbsObject;
-      hbsObject = {
-        articles: dbArticle
-      };
-      res.render("index", hbsObject);
+      // const retrievedArticles = dbArticle;
+      // let hbsObject;
+      // hbsObject = {
+      //   articles: dbArticle
+      // };
+      res.render("index", {articles});
     })
     .catch(function (err) {
       // If an error occurred, send it to the client
