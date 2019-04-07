@@ -3,8 +3,24 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  background-color: #F2F6D0;
+  background-color: #ffd700;
   font-weight: bolder
+}
+
+a:link {
+  color: #000000;
+}
+
+a:visited  {
+  color: #ff0000;
+}
+
+a:hover {
+  color: #ffd700;
+}
+
+a:active {
+  color: #008000;
 }
 
 #banner {
@@ -59,6 +75,16 @@ textarea {
   background-color: red;
   background-image: url("../img/hackernews.jpg");  
 }
+
+/* .card-header {
+  color: #556b2f; 
+  background-color: #dac184;
+}
+
+.card-header:first-child {
+  color: #556b2f;
+  background-color: #dac184;
+} */
 
 @media (min-width: 1px) {
   .display-1 {

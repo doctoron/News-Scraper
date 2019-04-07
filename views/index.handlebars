@@ -9,8 +9,8 @@
             <a class="nav-item nav-link active" href="/">Home
                 <span class="sr-only">(current)</span>
             </a>
-            <a class="nav-item nav-link" href="/articles">Saved Articles</a>
-            <a href="/scrape" class="btn btn-danger active" role="button" aria-pressed="true">Scrape Hacker News</a>
+            <a class="nav-item nav-link" href="/saved">Saved Articles</a>
+            <a href="/scrape" class="btn btn-danger active" role="button" aria-pressed="true">Scrape Latest News</a>
         </div>
     </div>
 </nav>
@@ -18,18 +18,18 @@
         <div class="jumbotron text-center background-image">
             <div class="overlay">
                 <div class="caption">
-                    <h1 class="display-1" id="banner">Mongo Scraper</h1>
-                    <h2 class="display-4" id="subhead">Hacker News Edition</h2>
+                    <h1 class="display-1" id="banner">Hacker Express</h1>
+                    <h2 class="display-4" id="subhead">Mongo Scaper Edition</h2>
                 </div>
             </div>
         </div>
-    <div class=row>
+    <div class="row">
         <div class="col-12">
-            {{#if article}}
-            {{#each article}}
-                <div class="card w-90">
-                    <div class="card-header text-white bg-primary">
-                        <a href={{link}} target="_blank" class="text-white">
+            {{#if articles}}
+            {{#each articles}}
+                <div class="card-header">
+                    <div class="card-header">
+                        <a href={{link}} target="_blank" class="card-header">
                             <h2>{{title}}</h2>
                         </a>
                     </div>
@@ -42,7 +42,7 @@
                 </div>
             {{/each}}
             {{else}}
-                <div class="card text-white bg-warning w-90 p-1">
+                <div class="card text-darkgreen bg-warning w-90 p-1">
                     <div class="card-body text-center">
                         Sorry, it looks like we don't have any new articles at this time.
                     </div>

@@ -7,9 +7,9 @@ const db = require("../models/");
 
 // Create all our routes and set up logic within those routes where required.
 router.get("/", (req, res) => {
-  db.article.selectAll((data) => {
+  articles.all((data) => {
     let hbsObject = {
-      dbarticle: data
+      articles: data
     };
     console.log(hbsObject);
     res.render("index", hbsObject);
@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/article", (req, res) => {
-  db.article.insertOne([
+  articles.insertOne([
     "title"
   ], [
       req.body.title
@@ -26,7 +26,7 @@ router.post("/article", (req, res) => {
 
 router.put("/article/:id", (req, res) => {
   let condition = "id =" + req.params.id;
-  db.article.updateOne({
+  articles.updateOne({
     saved: true
   }, condition, (data) => res.redirect('/'));
 });
