@@ -38,15 +38,17 @@ app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
 // Define connection to the local  MongoDB URI
-let MONGODB_URI = 'mongodb://heroku_thqttplq:doegubk1n9vo97fob2nobsj6q5@ds111771.mlab.com:11771/heroku_thqttplq';
+// let MONGODB_URI = 'mongodb://heroku_thqttplq:doegubk1n9vo97fob2nobsj6q5@ds111771.mlab.com:11771/heroku_thqttplq';
 let databaseURi = 'mongodb://localhost/webscraper';
 
 if (process.env.MONGODB_URI) {
-// THIS EXECUTIES IF THIS IS BEING EXECUTED IN YOUR HEROKU APP
-mongoose.connect(process.env.MOGODB_URI);
+  // THIS EXECUTIES IF THIS IS BEING EXECUTED IN YOUR HEROKU APP
+  mongoose.connect(process.env.MOGODB_URI);
 } else {
   // THIS EXECUTES IF THIS IS BEING EXECUTED ON YOUR LOCAL MACHINE
-  mongoose.connect(databaseURi, { useNewUrlParser: true });
+  // mongoose.connect(databaseURi, { useNewUrlParser: true });
+  mongoose.connect(databaseURi);
+
 }
 
 const url1 = 'http://www.echojs.com/'
@@ -55,8 +57,8 @@ const url2 = 'https://news.ycombinator.com/';
 app.get('/', (req, res) => {
   db.Article.find({})
     .then(articles => {
-      res.render("index", { 
-        articles 
+      res.render("index", {
+        articles
       });
     })
     .catch(err => {
