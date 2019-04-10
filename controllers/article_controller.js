@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 // Pull in all required dependencies
-const db = require("../models/");
+const dbRoute = require("../models/");
 
 // Create all our routes and set up logic within those routes where required.
 router.get("/", (req, res) => {
@@ -33,4 +33,4 @@ router.put("/article/:id", (req, res) => {
 
 
 // Export routes for server.js
-module.exports = db;
+module.exports = dbRoute;
