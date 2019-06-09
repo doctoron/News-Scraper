@@ -1,4 +1,3 @@
-// require('dotenv').config()
 const express = require('express');
 const exphbs = require('express-handlebars');
 const logger = require('morgan');
@@ -7,7 +6,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 // Require all models setting the root at ./models
-var db = require('./models');
+const db = require('./models/');
 
 // Port configuration for local || Heroku
 const PORT = process.env.PORT || process.argv[2] || 6020;
@@ -16,12 +15,14 @@ const PORT = process.env.PORT || process.argv[2] || 6020;
 const app = express();
 
 // Configure middleware and display home page
+// app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+// app.set('view engine', 'handlebars');
 app.set('view engine', 'handlebars');
 
 app.engine('handlebars', exphbs({
   defaultLayout: 'main',
   helpers: {
-    toJSON: function (object) {
+    toJSON: (object) => {
       return JSON.stringify(object);
     }
   }
@@ -31,26 +32,20 @@ app.engine('handlebars', exphbs({
 app.use(logger('dev'));
 
 // Parse request body as JSON
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Make /public a static folder
-// app.use(express.static('/public'));
 app.use(express.static(__dirname + '/public'));
+// app.use(express.static('/public'));
 
-// Define connection to the local  MongoDB URI
-// let MONGODB_URI = 'mongodb://heroku_thqttplq:doegubk1n9vo97fob2nobsj6q5@ds111771.mlab.com:11771/heroku_thqttplq';
-let databaseURi = 'mongodb://localhost/webscraper';
+// Connect to the Mongo DB
+mongoose.Promise = Promise;
+mongoose.connect('mongodb://localhost/webscraper', { useNewUrlParser: true });
 
-if (process.env.MONGODB_URI) {
-  // THIS EXECUTIES IF THIS IS BEING EXECUTED IN YOUR HEROKU APP
-  mongoose.connect(process.env.MOGODB_URI);
-} else {
-  // THIS EXECUTES IF THIS IS BEING EXECUTED ON YOUR LOCAL MACHINE
-  mongoose.connect(databaseURi, { useNewUrlParser: true });
-  // mongoose.connect(databaseURi);
-
-}
+// Routes
+// Import routes and give the server access to them.
+const routes = require("./controllers/article_controller");
 
 const url1 = 'http://www.echojs.com/'
 const url2 = 'https://news.ycombinator.com/';
@@ -68,14 +63,13 @@ app.get('/', (req, res) => {
     });
 });
 
-// A get route for scraping the url
 app.get('/scrape', (req, res) => {
   axios.get(url1).then(response => {
     const $ = cheerio.load(response.data);
-
-    // Now with cheerio grab every td tag with title class, and do the following:
+    console.log($);
+    let data = {};
+    
     $("article h2").each((i, element) => {
-      let result = {};
 
       result.title = $(this)
         .children('a')
@@ -89,11 +83,11 @@ app.get('/scrape', (req, res) => {
         .then((dbArticle) => {
           console.log(result);
         })
-        .catch(err => {
-          console.log(err);
+        .catch(error => {
+          console.log(error);
         });
     });
-    res.send('Scrape Complete');
+    res.redirect('/');
   });
 });
 
@@ -105,26 +99,26 @@ app.get("/saved", (req, res) => {
       hbsObject = {
         articles: retrievedArticles
       };
-      res.render("saved", hbsObject);
+      // res.render("saved", hbsObject);
     })
-    .catch(function (err) {
+    .catch(error => {
       // If an error occurred, send it to the client
-      res.json(err);
+      res.json(error);
     });
 });
 
 // Route for getting all Articles from the db
-app.get("/saved", (req, res) => {
+app.get("/articles", (req, res) => {
   // Grab every document in the Articles collection
   db.Article.find({})
     .then((dbArticle) => {
       // If we were able to successfully find Articles, send them back to the client
       res.json.render(dbArticle);
-      res.json(dbArticle);
+      // res.json(dbArticle);
     })
-    .catch((err) => {
+    .catch(error => {
       // If an error occurred, send it to the client
-      res.json(err);
+      res.json(error);
     });
 });
 
@@ -138,9 +132,9 @@ app.get("/articles/:id", (req, res) => {
       // If we were able to successfully find an Article with the given id, send it back to the client
       res.json(dbArticle);
     })
-    .catch((err) => {
+    .catch(error => {
       // If an error occurred, send it to the client
-      res.json(err);
+      res.json(error);
     });
 });
 
@@ -158,9 +152,9 @@ app.post("/articles/:id", function (req, res) {
       // If we were able to successfully update an Article, send it back to the client
       res.json(dbArticle);
     })
-    .catch(function (err) {
+    .catch(error => {
       // If an error occurred, send it to the client
-      res.json(err);
+      res.json(error);
     });
 });
 

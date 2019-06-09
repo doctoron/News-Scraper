@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 // Pull in all required dependencies
-const dbRoute = require("../models/");
+const db = require("../models/");
 
 // Create all our routes and set up logic within those routes where required.
 router.get("/", (req, res) => {
@@ -16,15 +16,17 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/article", (req, res) => {
+router.post("/articles", (req, res) => {
   articles.insertOne([
-    "title"
+    "title",
+    "link"
   ], [
-      req.body.title
+      req.body.title,
+      req.body.link
     ], (data) => res.redirect("/"));
 });
 
-router.put("/article/:id", (req, res) => {
+router.put("/articles/:id", (req, res) => {
   let condition = "id =" + req.params.id;
   articles.updateOne({
     saved: true
@@ -33,4 +35,4 @@ router.put("/article/:id", (req, res) => {
 
 
 // Export routes for server.js
-module.exports = dbRoute;
+module.exports = db;

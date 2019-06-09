@@ -4,9 +4,9 @@
   "description": "### Overview News scraper allows you to select articles, read news and write your comments. This app uses express, morgan, mongoose, axios and cheerio to perform web scraping, retrieve articles and inserts them into a mongodb database.  Database schema is defined and created through mongoose and related to comments that the reader can add, update and delete.",
   "main": "server.js",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "cheerio": "^1.0.0-rc.3",
-    "dotenv": "^7.0.0",
+    "dotenv": "^8.0.0",
     "express": "^4.16.4",
     "express-handlebars": "^3.0.2",
     "mongoose": "^5.5.0",
